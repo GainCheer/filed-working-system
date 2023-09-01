@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+
+    </title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="../css/font.css">
+    <link rel="stylesheet" href="../css/xadmin.css">
+    <script src="../node_modules/md5/dist/md5.min.js"></script>
+    <script src="../lib/layui/layui.php" charset="utf-8"></script>
+    <script src="../node_modules/axios/dist/axios.js"></script>
+    <script src="../lib/js/data.js"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script src="../node_modules/axios/dist/axios.js"></script>
+    <script src="../lib/js/data.js"></script>
+    <!--[if lt IE 9]>
+          <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+          <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+</head>
+
+<body>
+    <!-- 导航部分 -->
+    <div class="x-nav">
+        <span class="layui-breadcrumb">
+            <a href="javascript:void(0);">首页</a>
+            <a href="javascript:void(0);">车辆管理</a>
+
+
+            <a><cite>人员作业量统计</cite></a>
+
+
+
+        </span>
+        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+        </a>
+    </div>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <!-- 表单部分 -->
+                    <div class="layui-card-body ">
+
+                        <form class="layui-form layui-col-space5" onSubmit="subs();">
+                            <div class="layui-inline layui-show-xs-block">
+                                <input class="layui-input" autocomplete="off" placeholder="出勤月份" name="starts" id="starts">
+                            </div>
+
+
+                            <div class="layui-inline">
+
+
+
+                                <div class="layui-input-inline">
+                                    <!--lay-verify="required" 此项目强制要填写才允许提交控件-->
+                                    <select name="nameSel" id="nameSel" lay-search="">
+                                        <option value="">全部人员</option>
+
+
+                                    </select>
+                                </div>
+
+
+
+
+
+
+                            </div>
+
+
+
+
+
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn" lay-submit="" lay-filter="sreach">
+                                    <i class="layui-icon">&#xe615;</i></button>
+                            </div>
+
+
+
+
+
+
+
+                        </form>
+                    </div>
+
+                    <!-- 日期判断 -->
+                    <script language="javascript">
+                        function subs() {
+
+
+                            localStorage.setItem("person_offlineTime_month_selMonth", starts.value)
+                            localStorage.setItem("person_offlineTime_month_per_name", nameSel.value)
+                            console.log(nameSel.value)
+
+                        }
+                    </script>
+
+                    <!-- 表格部分 1-->
+                    <div class="layui-card-body">
+                        <table class="layui-table" id="table1" style="width:2800px;" lay-filter="test">
+                            <thead>
+                                <tr>
+                                    <!-- <th lay-data="{field:'op', sort: true ,minWidth: 250}">操作</th>  -->
+                                    <!-- <th lay-data="{field:'id', width:90, sort: true}">序号</th>
+                                    <th lay-data="{field:'org', width:120, sort: true}">组织机构</th>
+                                    <th lay-data="{field:'car_name', minWidth:150,sort: true}">车辆名称</th> -->
+
+
+                                </tr>
+                            </thead>
+                        </table>
+
+                    </div>
+                    <div id="pageDiv"></div>
+                    <!-- 表格部分 2-->
+                    <div class="layui-card-body" id="table2" style="display: none;">
+                        <table class="layui-table" style="width:2800px;" lay-filter="test">
+                            <thead>
+                                <tr>
+                                    <!-- <th lay-data="{field:'op', sort: true ,minWidth: 250}">操作</th>  -->
+                                    <th lay-data="{field:'id', width:90, sort: true}">序号</th>
+                                    <th lay-data="{field:'account_date', width:90, sort: true}">台账日期</th>
+                                    <th lay-data="{field:'org', width:120, sort: true}">组织机构</th>
+                                    <th lay-data="{field:'car_name', minWidth:150,sort: true}">车辆名称</th>
+                                    <th lay-data="{field:'car_fleet', width:120, sort: true}">所属车队</th>
+                                    <th lay-data="{field:'car_work_type', sort: true ,minWidth: 150}">作业类型</th>
+                                    <th lay-data="{field:'car_type',  sort: true,minWidth: 150}">车辆类型</th>
+                                    <th lay-data="{field:'car_status', minWidth:150,sort: true}">车辆状态</th>
+                                    <th lay-data="{field:'car_plate', minWidth:150,sort: true}">车牌类型</th>
+                                    <th lay-data="{field:'car_purchase', sort: true ,minWidth: 150}">购置日期</th>
+                                    <th lay-data="{field:'car_brand', sort: true ,minWidth: 150}">车辆品牌</th>
+                                    <th lay-data="{field:'car_fuel', sort: true ,minWidth: 150}">燃油性质</th>
+                                    <th lay-data="{field:'car_frame', sort: true ,minWidth: 150}">车架号</th>
+                                    <th lay-data="{field:'car_Engine', sort: true ,minWidth: 150}">发动机号</th>
+                                    <th lay-data="{field:'car_owner', sort: true ,minWidth: 150}">车主名称</th>
+                                    <th lay-data="{field:'car_money_from', sort: true ,minWidth: 150}">资金来源</th>
+                                    <th lay-data="{field:'car_pl', sort: true ,minWidth: 150}">责任人</th>
+                                    <th lay-data="{field:'car_mileage', sort: true ,minWidth: 150}">行驶里程(公里)</th>
+                                    <th lay-data="{field:'car_attendance', sort: true ,minWidth: 150}">出勤时长</th>
+                                    <th lay-data="{field:'car_time',  sort: true,minWidth: 150}">工作时长</th>
+                                    <th lay-data="{field:'car_operating', sort: true ,minWidth: 150}">作业里程(公里)</th>
+                                    <th lay-data="{field:'car_wtime', sort: true ,minWidth: 150}">作业时长</th>
+                                    <th lay-data="{field:'car_fuel, sort: true ,minWidth: 150}">作业油耗(升)</th>
+                                    <th lay-data="{field:'car_water', sort: true ,minWidth: 150}">水耗(吨)</th>
+                                    <th lay-data="{field:'car_cost', sort: true ,minWidth: 150}">总费用(元)</th>
+                                    <th lay-data="{field:'car_mtimes', sort: true ,minWidth: 150}">维修次数</th>
+                                    <th lay-data="{field:'car_mamount', sort: true ,minWidth: 150}">维修金额</th>
+                                    <th lay-data="{field:'car_PMT', sort: true ,minWidth: 150}">保养次数</th>
+                                    <th lay-data="{field:'car_PMC', sort: true ,minWidth: 150}">保养金额</th>
+                                    <th lay-data="{field:'car_accident', sort: true ,minWidth: 150}">事故次数</th>
+                                    <th lay-data="{field:'car_accidentA', sort: true ,minWidth: 150}">事故金额</th>
+                                    <th lay-data="{field:'car_Depreciation', sort: true ,minWidth: 150}">折旧金额</th>
+                                    <th lay-data="{field:'car_original', sort: true ,minWidth: 150}">原值(元)</th>
+
+                                </tr>
+                            </thead>
+                        </table>
+
+                    </div>
+
+                    <!-- 表格工具栏 -->
+                    <!-- <script type="text/html" id="toolbarDemo">
+                        <div class="layui-btn-container">
+
+                            <button class="layui-btn layui-btn-sm" style="background-color:#fa8d4b" onclick="table1.style.display='block';table2.style.display='none';"> 汇总台账 </button>
+
+                            <button class="layui-btn layui-btn-sm" style="background-color:#fa8d4b" onclick="table2.style.display='block';table1.style.display='none';"> 日台账</button>
+
+
+                            <button class="layui-btn layui-btn-sm" lay-event="getCheckData" style="display:none;"> 获取选中行Json数据 </button>
+                            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button >
+                            <button class = "layui-btn layui-btn-sm" lay-event = "isAll"   > 验证是否全选</button>
+                        </div> 
+                    </script> -->
+
+
+                    <script language="javascript">
+                        function ewm(x) {
+
+                            xadmin.open('车辆信息二维码', '../qrc/update/img/vihicle-ewm.php?md5=' + x); // 使用绝对路径，直接在二维码生成与二维码扫描显示的文件位置 
+
+                        }
+
+                        function xad(x) {
+                            xadmin.open('车辆信息编辑', 'vihicle-edit.php?action=edit&md5=' + x);
+                        }
+
+
+                        function mdel(x, y) {
+                            // xadmin.open('删除车辆信息','vihicle-edit.php?action=del&md5='+x);
+                            if (confirm('是否删除车辆代码为：' + y + ' 的车辆信息？\n1、删除后数据不可见，将放入平台数据回收站；\n2、如误删除请联系高新研发部进行恢复。')) {
+                                location.href = '?action=delcarinfo&md5=' + x;
+                                return true;
+                            } else {
+                                return false;
+                            }
+
+                        }
+
+
+                        function xadd() {
+                            xadmin.open('车辆信息增加', 'vihicle-edit.php?action=add');
+                        }
+                    </script>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/html" id="switchTpl">
+    <!-- 这里的checked的状态只是演示 -->
+    <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="女|男" lay-filter="sexDemo" {{ d.id==10003 ? 'checked' : '' }}>
+</script>
+
+
+<script>
+    let selDate = localStorage.getItem("person_offlineTime_month_selMonth") ? localStorage.getItem("person_offlineTime_month_selMonth") :
+        new Date().getFullYear() + "-" + addZeroByTen(new Date().getMonth() + 1)
+        // "2023-05"
+    let personFilterKey = localStorage.getItem("person_offlineTime_month_per_name") ? localStorage.getItem("person_offlineTime_month_per_name") : ""
+    let personInfo = []
+    let totalDay = getAllDayByMonth(selDate)
+    let curPage = localStorage.getItem("person_offlineTime_month_page") ? localStorage.getItem("person_offlineTime_month_page") : 1
+    let pageSize = 1
+    let cols = [
+        [{
+            field: 'date',
+            title: '月份',
+            sort: true,
+            width: 100
+
+        }, {
+            field: 'per_name',
+            title: '姓名',
+            sort: true,
+            width: 70
+
+        }, {
+            field: 'per_type',
+            title: '组别',
+            sort: true,
+            width: 70
+
+        }, {
+            field: 'totalOff',
+            title: '总离线次数(月)',
+            sort: true,
+            width: 95
+
+        }, ]
+    ]
+    for (let i = 1; i <= totalDay; i++) {
+        let obj = {
+            field: addZeroByTen(i),
+            title: i + "号",
+            sort: true,
+            width: 95
+        }
+        cols[0].push(obj)
+    }
+    if (localStorage.getItem("selAttendName") && localStorage.getItem("per_name")) {
+        let selAk = localStorage.getItem("selAttendName")
+        let per_name = localStorage.getItem("per_name")
+        console.log(selAk)
+        console.log(per_name)
+    }
+    getAllCid().then(res => {
+        // 人车分离
+        // res = res.filter(item => item.per_type != "车队")
+        console.log(res)
+            // 分页处理        
+        personInfo = res.slice((curPage - 1) * pageSize, curPage * pageSize)
+        let promiseOffLineArr = []
+        res.forEach((item) => {
+            if (item.ak == personFilterKey) {
+                personInfo = []
+                personInfo[0] = item
+            }
+            let op = document.createElement('option')
+            op.innerHTML = item.per_name
+            op.value = item.ak
+
+            document.getElementById("nameSel").appendChild(op)
+        })
+        personInfo.forEach((item, index) => {
+
+
+            item.totalOff = 0
+            item.date = selDate
+            for (let i = 1; i <= totalDay; i++) {
+                if (i < 10) {
+                    i = "0" + i
+                }
+                let promise = getPersonTrackInfo(item.ak, selDate, i, item)
+                promiseOffLineArr.push(promise)
+            }
+
+            // .then(trackData => {
+            //     console.log(trackData)
+            //     item["1"] = trackData.offlineCount
+
+
+            // })
+
+
+        })
+        Promise.all(promiseOffLineArr).then(resArr => {
+
+            console.log(resArr)
+            let data = personInfo
+            console.log(data)
+            layui.use("laypage", function() {
+                var laypage = layui.laypage;
+                // 自定义排版                    
+                laypage.render({
+                    elem: 'pageDiv',
+                    count: personFilterKey ? 1 : res.length,
+                    curr: localStorage.getItem("person_offlineTime_month_page") ? localStorage.getItem("person_offlineTime_month_page") : 1,
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip'], // 功能布局
+                    limit: pageSize,
+                    jump: function(obj) {
+                        // 模拟渲染
+                        localStorage.setItem("person_offlineTime_month_page", obj.curr)
+                            // data = data.slice((obj.curr - 1) * obj.limit, (obj.curr) * obj.limit)
+
+                        layui.use('table',
+                            function() {
+                                var table = layui.table;
+
+                                table.render({
+                                    elem: '#table1',
+                                    data: data,
+                                    page: false,
+                                    toolbar: '#toolbarDemo',
+
+                                    lay_data: {
+                                        page: false,
+                                        toolbar: '#toolbarDemo',
+                                        id: 'test'
+                                    },
+                                    cols,
+
+
+                                });
+
+
+
+
+                                //监听单元格编辑
+                                table.on('edit(test)',
+                                    function(obj) {
+                                        var value = obj.value //得到修改后的值
+                                            ,
+                                            data = obj.data //得到所在行所有键值
+                                            ,
+                                            field = obj.field; //得到字段
+                                        layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value);
+                                    });
+
+                                //头工具栏事件
+                                table.on('toolbar(test)',
+                                    function(obj) {
+                                        var checkStatus = table.checkStatus(obj.config.id);
+                                        switch (obj.event) {
+                                            case 'getCheckData':
+                                                var data = checkStatus.data;
+                                                layer.alert(JSON.stringify(data));
+                                                break;
+                                            case 'getCheckLength':
+                                                var data = checkStatus.data;
+                                                layer.msg('选中了：' + data.length + ' 个');
+                                                break;
+                                            case 'isAll':
+                                                layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                                                break;
+                                        };
+                                    });
+                            });
+
+                    }
+                });
+
+            })
+
+        })
+        nameSel.value = personFilterKey
+
+    })
+
+
+
+
+    layui.use('laydate',
+        function() {
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#starts', //指定元素
+                type: "month",
+                value: selDate
+            });
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#ends' //指定元素
+            });
+
+        });
+</script>
+
+
+
+<!--    <script>var _hmt = _hmt || []; (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();</script>-->
+
+</html>

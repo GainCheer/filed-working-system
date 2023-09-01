@@ -5,7 +5,11 @@ this system mainly focus on managing the field cleaning personnel, including the
 
 #### Software Architecture
 Software architecture description
-
+file discription:
+    --js/xadmin.js: 
+    this file is used to create child tab page by the method of "iframe embarking"
+    --lib/js/data.js :
+    this file is used to connect the backend API and get the res to transmit the data to frontend
 #### Installation
 
 1.  xxxx
